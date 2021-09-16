@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    tools {
+  maven 'M2_HOME'
+}
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        
+        stage('contDownload') {
+            steps{
+                git 'https://github.com/cchesami/webapp1.git'
+            }
+        }
+        stage('Cont Build') {
+            steps {
+                sh 'mvn clean install package'
+            }
+        }
+        
+        stage('Cont Deployment') {
+            steps {
+                deploy adapters: [tomcat8(credentialsId: 'jenkinstomcatdeployment', path: '', url: 'http://10.0.1.49:8090')], contextPath: 'testapp', war: '**/*.war'
+            }
+        }
+        stage('Cont Testing') {
+            steps {
+                git 'https://github.com/cchesami/sampleMaven.git'
+                sh 'mvn clean install'
+            }
+        }
+    }
+}
