@@ -33,5 +33,10 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+        stage('Cont Delivery') {
+            steps {       
+            deploy adapters: [tomcat8(credentialsId: 'jenkinstomcatdeployment', path: '', url: 'http://10.0.1.96:8050')], contextPath: 'prodapp', war: '**/*.war'
+            }
+        }
     }
 }
